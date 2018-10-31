@@ -7,6 +7,7 @@
     "body-parser": "^1.18.3",
     "cors": "^2.8.4",
     "express": "^4.16.4",
+    "jimp": "^0.5.6",
     "jsonwebtoken": "^8.3.0",
     "mongoose": "^5.3.7",
     "mongoose-sequence": "^4.0.1",
@@ -16,7 +17,7 @@
   "devDependencies": {},
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start" : "node app.js"
+    "start": "node app.js"
   },
   "author": "",
   "license": "ISC"

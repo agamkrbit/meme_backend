@@ -38,7 +38,7 @@ router.get('/all', function(req, res){
                 custom : data.map(val => ({
                     customId : val.customId,
                     imageLink : val.imageLink,
-                    text : data.text
+                    text : val.text
                 })) || []
             })
         }

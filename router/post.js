@@ -43,7 +43,12 @@ router.get('/all', function(req, res){
     }]).then(posts => {
         res.status(200).json({
             status : 'success',
-            posts : posts
+            posts : posts.map((val) => {
+                return {
+                    ...val,
+                    isLiked : val.likedBy.includes(req.user.userId)
+                }
+            })
         })
     }).catch(err => {
         res.status(200).json({
@@ -97,9 +102,10 @@ router.post('/:postId/like/:userId', function(req, res){
             }else{
                 if(data.postId){
                     var { likedBy } = data;
+                    likedBy.push(req.params.userId);
                     if(!likedBy.includes(req.params.userId)){
                         Post.updateOne({postId : req.params.postId}, {
-                            likedBy : likedBy.push(userId)
+                            $set : {likedBy : likedBy}
                         }, function(err, data){
                             if(err){
                                 res.status(200).json({
@@ -145,12 +151,14 @@ router.post('/:postId/unlike/:userId', function(req, res){
                     message : 'internal error'
                 })
             }else{
-                if(data.postId){
+                if(data.imageURL){
                     var { likedBy } = data;
-                    if(likedBy.includes(req.params.userId)){
-                        Post.updateOne({postId : req.params.postId}, {
-                            likedBy : likedBy.filter( val => val !== userId)
-                        }, function(err, data){
+                    console.log(likedBy);
+                    console.log(req.params.userId);
+                    if(likedBy.includes(parseInt(req.params.userId))){
+                        Post.updateOne({postId : parseInt(req.params.postId)}, {
+                        $set : {likedBy : likedBy.filter( val => val !== parseInt(req.params.userId))
+                        }}, function(err, data){
                             if(err){
                                 res.status(200).json({
                                     status : 'error',
@@ -199,16 +207,17 @@ router.post('/:postId/comment/:userId', function(req, res){
                     Post.updateOne({
                         postId : req.params.postId
                     }, {
-                        comments : data.comment.push({
+                        $addToSet : { comments : {
                             comment : req.body.comment,
                             commentedBy : req.params.userId,
-                            commentedByName : req.body.user.firstname + ' ' + req.body.user.lastname,
-                        })
+                            commentedByName : req.user.firstname + ' ' + req.user.lastname,
+                        }}
                     }, function(err, data){
                         if(err){
+                            console.log(err)
                             res.status(200).json({
                                 status : 'error',
-                                message : 'internal error'
+                                message : err
                             })
                         }else{
                             res.status(200).json({
