@@ -23,4 +23,4 @@ app.use('/post', postRouter);
 app.use('/custom', customRouter);
 app.use('/user', userRouter);
 
-app.listen(3030, console.log('listing to port 3030'));
+app.listen(process.env.PORT || 3000, console.log('listing to port 3030'));
